@@ -26,7 +26,7 @@ const defaultProjects = [
     stack: ["PyTorch", "OpenCV", "Streamlit", "LLM"],
     year: 2025,
     type: "AI Application",
-    featured: true,
+    featured: false,
     slug: "agrocare-ai"
   },
   {
@@ -76,7 +76,7 @@ const defaultProjects = [
     stack: ["Kubernetes", "Prometheus", "Grafana", "Python"],
     year: 2025,
     type: "SRE and Reliability",
-    featured: false,
+    featured: true,
     slug: "rule-based-self-healing-kubernetes-infrastructure"
   }
 ];
