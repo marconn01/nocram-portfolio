@@ -1,0 +1,46 @@
+<%- include('partials/head', { page, site, currentPath: '/projects' }) %>
+<%- include('partials/header', { currentPath: '/projects' }) %>
+
+<main>
+  <section class="page-head">
+    <p class="eyebrow">Project Gallery</p>
+    <h1>Projects and Publications</h1>
+  </section>
+
+  <section class="publication-card" aria-label="Publications and research">
+    <p class="eyebrow">Publications and Research</p>
+    <h2>Wavelet-Driven Neural Super-Resolution for Real-Time Rendering</h2>
+    <p>arXiv:2508.16024</p>
+    <ul>
+      <li>Researched and implemented a wavelet-based neural super-resolution method for rendered frame quality enhancement.</li>
+      <li>Developed a Fourier-Mapped INR module for high-frequency detail reconstruction in real-time rendering.</li>
+      <li>Designed a feature extraction pipeline using HR G-buffers, temporal frames, and BRDF-based lighting decomposition.</li>
+      <li>Achieved PSNR: 36.8 dB, LPIPS: 0.059, and SSIM: 0.960, outperforming other SR methods.</li>
+      <li>Currently in review at Computers and Graphics journal with arXiv preprint available.</li>
+    </ul>
+  </section>
+
+  <section class="cards projects-grid" aria-label="Project list">
+    <% if (!projects.length) { %>
+      <article class="card empty">
+        <h2>No projects found</h2>
+        <p>Try another filter value.</p>
+      </article>
+    <% } %>
+
+    <% projects.forEach((project) => { %>
+      <article class="card">
+        <p class="chip"><%= project.type %> / <%= project.year %></p>
+        <h2><%= project.title %></h2>
+        <p><%= project.summary %></p>
+        <ul>
+          <% project.stack.forEach((tech) => { %>
+            <li><%= tech %></li>
+          <% }) %>
+        </ul>
+      </article>
+    <% }) %>
+  </section>
+</main>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,25 @@
+<%- include('partials/head', { page, site, currentPath: '/blog' }) %>
+<%- include('partials/header', { currentPath: '/blog' }) %>
+
+<main>
+  <section class="page-head split">
+    <div>
+      <p class="eyebrow">Blog</p>
+      <h1>My Blogs</h1>
+      <p>Some of the Things I have Written while learning it.</p>
+    </div>
+  </section>
+
+  <section class="cards blog-grid" aria-label="Blog posts">
+    <% posts.forEach((post) => { %>
+      <article class="card blog-card">
+        <p class="chip"><%= post.readTime %> / <%= post.date %></p>
+        <h2><a href="/blog/<%= post.slug %>"><%= post.title %></a></h2>
+        <p><%= post.excerpt %></p>
+        <a class="btn ghost" href="/blog/<%= post.slug %>">Open</a>
+      </article>
+    <% }) %>
+  </section>
+</main>
+
+<%- include('partials/footer') %>

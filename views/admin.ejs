@@ -1,0 +1,23 @@
+<%- include('partials/head', { page, site, currentPath: '/admin' }) %>
+<%- include('partials/header', { currentPath: '/admin' }) %>
+
+<main>
+  <section class="page-head">
+    <p class="eyebrow">Protected</p>
+    <h1>Admin dashboard</h1>
+    <p>This route is guarded by basic authentication middleware.</p>
+  </section>
+
+  <section class="stats">
+    <article>
+      <h2><%= projectCount %></h2>
+      <p>Total projects in source</p>
+    </article>
+    <article>
+      <h2>ON</h2>
+      <p>Authentication middleware status</p>
+    </article>
+  </section>
+</main>
+
+<%- include('partials/footer') %>

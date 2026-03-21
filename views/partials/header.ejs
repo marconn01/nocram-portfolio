@@ -1,0 +1,10 @@
+<header class="site-header">
+  <a href="/" class="brand">NAVIN NEPAL</a>
+  <nav class="site-nav" aria-label="Primary">
+    <a href="/" class="<%= currentPath === '/' ? 'active' : '' %>">Home</a>
+    <a href="/projects" class="<%= currentPath.startsWith('/projects') ? 'active' : '' %>">Projects</a>
+    <a href="/blog" class="<%= currentPath.startsWith('/blog') ? 'active' : '' %>">Blog</a>
+    <a href="/Navin_Nepal_Resume.pdf" target="_blank" rel="noopener">Resume</a>
+    <a href="/contact" class="<%= currentPath.startsWith('/contact') ? 'active' : '' %>">Contact</a>
+  </nav>
+</header>

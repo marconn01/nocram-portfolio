@@ -1,0 +1,41 @@
+<%- include('partials/head', { page, site, currentPath: '/contact' }) %>
+<%- include('partials/header', { currentPath: '/contact' }) %>
+
+<main>
+  <section class="page-head">
+    <p class="eyebrow">Contact</p>
+    <h1>Send a message</h1>
+    <p>Reach out for backend engineering, DevOps automation, or cloud deployment collaborations.</p>
+  </section>
+
+  <section class="contact-shell">
+    <form id="contactForm" class="contact-form" novalidate>
+      <label for="name">Name</label>
+      <input id="name" name="name" type="text" required minlength="2" />
+
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" required />
+
+      <label for="subject">Subject</label>
+      <input id="subject" name="subject" type="text" required minlength="4" />
+
+      <label for="message">Message</label>
+      <textarea id="message" name="message" rows="6" required minlength="12"></textarea>
+
+      <button type="submit" class="btn primary">Submit</button>
+      <p id="formStatus" class="form-status" aria-live="polite"></p>
+    </form>
+
+    <aside class="contact-card">
+      <h2>Prefer direct channel?</h2>
+      <p>Email: navinkhanal3@gmail.com</p>
+      <p>Phone: +977 9868265503</p>
+      <p>Location: Kathmandu, Nepal</p>
+      <p>GitHub: <a href="https://github.com/marconn01" target="_blank" rel="noopener">github.com/marconn01</a></p>
+      <p>LinkedIn: <a href="https://www.linkedin.com/in/navin-nepal/" target="_blank" rel="noopener">linkedin.com/in/navin-nepal</a></p>
+      <p>Response time: usually within 24 hours</p>
+    </aside>
+  </section>
+</main>
+
+<%- include('partials/footer') %>

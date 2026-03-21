@@ -1,0 +1,90 @@
+<%- include('partials/head', { page, site, currentPath: '/' }) %>
+<%- include('partials/header', { currentPath: '/' }) %>
+
+<main>
+  <section class="hero split">
+    <div>
+      <h1>Building reliable cloud systems with automation-first engineering.</h1>
+      <p>
+        I am Navin Nepal, focused on DevOps, SRE, and backend architecture across AWS,
+        Kubernetes, Terraform, and Python services.
+      </p>
+      <div class="hero-actions">
+        <a href="/projects" class="btn primary">Explore Projects</a>
+        <a href="/blog" class="btn ghost">Read Blog</a>
+      </div>
+    </div>
+
+    <aside class="profile-panel">
+      <p class="eyebrow">Profile</p>
+      <h2>Navin Nepal</h2>
+      <p>DevOps and Backend Engineer</p>
+      <p>Imadol, Lalitpur</p>
+      <p><a href="mailto:navinkhanal3@gmail.com">navinkhanal3@gmail.com</a></p>
+      <p><a href="tel:+9779868265503">+977 9868265503</a></p>
+      <p>
+        <a href="https://github.com/marconn01" target="_blank" rel="noopener">GitHub</a>
+        / <a href="https://www.linkedin.com/in/navin-nepal/" target="_blank" rel="noopener">LinkedIn</a>
+      </p>
+      <a href="/Navin_Nepal_Resume.pdf" class="btn primary" target="_blank" rel="noopener">Download CV</a>
+    </aside>
+  </section>
+
+  <section class="service-grid" aria-label="Expertise">
+    <article class="service-card">
+      <h3>DevOps</h3>
+      <p>CI/CD pipelines, release safety, and automation practices for fast and stable delivery.</p>
+    </article>
+    <article class="service-card">
+      <h3>Cloud Engineering</h3>
+      <p>AWS infrastructure design with Terraform, load balancing, observability, and cost-aware scaling.</p>
+    </article>
+
+    <article class="service-card">
+      <h3>Backend Systems</h3>
+      <p>FastAPI and Django services built for maintainability, performance, and clean operational workflows.</p>
+    </article>
+  </section>
+
+  <section class="featured" aria-labelledby="featured-heading">
+    <div class="section-head">
+      <h2 id="featured-heading">Featured Projects</h2>
+      <a href="/projects">See all</a>
+    </div>
+    <div class="cards">
+      <% featured.forEach((project) => { %>
+      <article class="card">
+        <p class="chip"><%= project.type %> / <%= project.year %></p>
+        <h3><%= project.title %></h3>
+        <p><%= project.summary %></p>
+        <ul>
+          <% project.stack.forEach((tech) => { %>
+            <li><%= tech %></li>
+          <% }) %>
+        </ul>
+      </article>
+      <% }) %>
+    </div>
+  </section>
+
+  <section class="featured" aria-labelledby="blog-heading">
+    <div class="section-head">
+      <h2 id="blog-heading">Blog</h2>
+      <a href="/blog">View blog</a>
+    </div>
+    <div class="cards blog-grid">
+      <% latestPosts.forEach((post) => { %>
+      <article class="card blog-card">
+        <p class="chip"><%= post.readTime %> / <%= post.date %></p>
+        <h3><a href="/blog/<%= post.slug %>"><%= post.title %></a></h3>
+        <p><%= post.excerpt %></p>
+        <a class="btn ghost" href="/blog/<%= post.slug %>">Open</a>
+      </article>
+      <% }) %>
+    </div>
+  </section>
+
+
+</main>
+
+<%- include('partials/footer') %>

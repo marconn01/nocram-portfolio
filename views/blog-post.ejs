@@ -1,0 +1,18 @@
+<%- include('partials/head', { page, site, currentPath: `/blog/${post.slug}` }) %>
+<%- include('partials/header', { currentPath: '/blog' }) %>
+
+<main>
+  <article class="article-shell">
+    <p class="eyebrow">Blog</p>
+    <h1><%= post.title %></h1>
+    <p class="article-meta"><%= post.date %> • <%= post.readTime %> • <%= post.tags.join(' • ') %></p>
+
+    <iframe
+      class="pdf-frame"
+      src="<%= post.pdfUrl %>#toolbar=0&navpanes=0&scrollbar=1&view=FitH"
+      title="<%= post.title %>"
+    ></iframe>
+  </article>
+</main>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= page.title %> | <%= site.title %></title>
+    <meta name="description" content="<%= page.description %>" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="<%= site.url %><%= currentPath %>" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="<%= page.title %> | <%= site.title %>" />
+    <meta property="og:description" content="<%= page.description %>" />
+    <meta property="og:url" content="<%= site.url %><%= currentPath %>" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="<%= page.title %> | <%= site.title %>" />
+    <meta name="twitter:description" content="<%= page.description %>" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Navin Nepal",
+        "url": "<%= site.url %>",
+        "jobTitle": "DevOps and Backend Engineer",
+        "sameAs": [
+          "https://github.com/marconn01",
+          "https://www.linkedin.com/in/navin-nepal/"
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <canvas id="bgTetris" aria-hidden="true"></canvas>
