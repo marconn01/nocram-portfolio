@@ -197,6 +197,4 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Portfolio server running on ${siteUrl}`);
-});
+module.exports = app;
