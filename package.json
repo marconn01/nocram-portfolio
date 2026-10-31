@@ -4,9 +4,10 @@
   "description": "Node.js portfolio website built with Express, dynamic content, and a retro game visual theme.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
-  },
+  "start": "node server.js",
+  "dev": "nodemon server.js",
+  "deploy": "wrangler deploy"
+},
   "keywords": [
     "portfolio",
     "nodejs",
