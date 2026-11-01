@@ -5,10 +5,7 @@ import path from "node:path";
 
 const require = createRequire(import.meta.url);
 const OUT = "dist";
-// 👇 List every page of your site here
-const ROUTES = ["/", "/about", "/projects", "/contact"];
 
-// Catch the server as soon as it starts listening, on any port
 let gotServer;
 const listening = new Promise((r) => (gotServer = r));
 let started = false;
@@ -22,7 +19,6 @@ http.Server.prototype.listen = function (...args) {
 process.env.PORT ||= "4321";
 const mod = require("./server.js");
 
-// If server.js didn't call listen itself, try starting its exported app
 setTimeout(() => {
   if (started) return;
   const app = mod?.app ?? mod?.default ?? mod;
@@ -30,10 +26,7 @@ setTimeout(() => {
 }, 1000);
 
 const timeout = new Promise((_, reject) =>
-  setTimeout(() => reject(new Error(
-    "server.js never started listening and doesn't export the Express app. " +
-    "Add `module.exports = app;` at the end of server.js."
-  )), 10000)
+  setTimeout(() => reject(new Error("server.js never started listening")), 10000)
 );
 
 try {
@@ -41,19 +34,41 @@ try {
   const { address, port } = server.address();
   const host = address === "::1" ? "[::1]" : "127.0.0.1";
   const base = `http://${host}:${port}`;
-  console.log("Server found at", base);
 
   await rm(OUT, { recursive: true, force: true });
-  await cp("public", OUT, { recursive: true }); // your css/js/images folder
+  await cp("public", OUT, { recursive: true });
 
-  for (const route of ROUTES) {
+  // Start at "/" and follow every internal page link
+  const queue = ["/"];
+  const seen = new Set();
+
+  while (queue.length) {
+    const route = queue.shift();
+    if (seen.has(route)) continue;
+    seen.add(route);
+
     const res = await fetch(base + route);
-    if (!res.ok) throw new Error(`${route} returned ${res.status}`);
+    if (!res.ok) {
+      if (route === "/") throw new Error(`Home page returned ${res.status}`);
+      console.warn(`Skipped ${route} (${res.status})`);
+      continue;
+    }
+    if (!(res.headers.get("content-type") || "").includes("text/html")) continue;
+
+    const html = await res.text();
     const file = route === "/" ? "index.html" : path.join(route.slice(1), "index.html");
     await mkdir(path.dirname(path.join(OUT, file)), { recursive: true });
-    await writeFile(path.join(OUT, file), await res.text());
+    await writeFile(path.join(OUT, file), html);
     console.log("Rendered", route);
+
+    // Find links like href="/projects" (ignore files like /style.css)
+    for (const [, link] of html.matchAll(/href="(\/[^"#?]*)"/g)) {
+      const clean = link.length > 1 ? link.replace(/\/$/, "") : link;
+      if (!path.extname(clean) && !seen.has(clean)) queue.push(clean);
+    }
   }
+
+  console.log(`Done: ${seen.size} page(s) checked`);
   process.exit(0);
 } catch (err) {
   console.error(err);
