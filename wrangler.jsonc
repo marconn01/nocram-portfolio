@@ -4,5 +4,9 @@
   "compatibility_date": "2026-10-31",
   "assets": {
     "directory": "./dist"
-  }
+  },
+  "routes": [
+    { "pattern": "navinnepal.com.np", "custom_domain": true },
+    { "pattern": "www.navinnepal.com.np", "custom_domain": true }
+  ]
 }
