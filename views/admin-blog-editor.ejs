@@ -1,0 +1,96 @@
+<%- include('partials/head', { page: { ...page, noindex: true }, site, currentPath: '/admin/blog' }) %>
+<%- include('partials/header', { currentPath: '/admin' }) %>
+
+<main id="main" class="wrap wrap-wide editor-main">
+  <form id="postForm" class="editor" data-original-slug="<%= post.slug %>" data-is-new="<%= isNew %>" novalidate>
+    <div class="editor-bar">
+      <a href="/admin/blog" class="editor-back">&larr; All posts</a>
+      <p id="editorStatus" class="editor-status" aria-live="polite"><%= isNew ? 'New post' : `content/blog/${post.slug}.md` %></p>
+      <div class="editor-bar-actions">
+        <% if (!isNew) { %>
+          <a class="btn btn-small" href="/admin/blog/preview/<%= post.slug %>" target="_blank" rel="noopener" title="Save first to see latest changes">full preview ↗</a>
+          <button type="button" id="deleteBtn" class="btn btn-danger">Delete</button>
+        <% } %>
+        <button type="submit" class="btn btn-primary" title="Ctrl/Cmd + S">Save</button>
+      </div>
+    </div>
+
+    <div class="editor-meta">
+      <label class="field wide">
+        <span>Title</span>
+        <input name="title" id="titleInput" value="<%= post.title %>" required placeholder="Setting up ArgoCD on EKS" />
+      </label>
+      <label class="field">
+        <span>Slug (URL)</span>
+        <input name="slug" id="slugInput" value="<%= post.slug %>" required pattern="[a-z0-9]+(-[a-z0-9]+)*" placeholder="setting-up-argocd-on-eks" />
+      </label>
+      <label class="field">
+        <span>Date</span>
+        <input name="date" type="date" value="<%= post.date %>" required />
+      </label>
+      <label class="field">
+        <span>Tags (comma separated)</span>
+        <input name="tags" value="<%= post.tags.join(', ') %>" placeholder="Kubernetes, GitOps" />
+      </label>
+      <label class="field">
+        <span>Cover image (optional)</span>
+        <span class="field-row">
+          <input name="cover" id="coverInput" value="<%= post.cover %>" placeholder="/blog-images/cover.png" />
+          <button type="button" class="btn btn-small" id="coverUploadBtn">Upload</button>
+        </span>
+      </label>
+      <label class="field wide">
+        <span>Excerpt (shown on cards &amp; search results)</span>
+        <input name="excerpt" value="<%= post.excerpt %>" placeholder="One or two sentences about the post." />
+      </label>
+      <label class="field">
+        <span>PDF instead of text (optional)</span>
+        <input name="pdf" value="<%= post.pdfUrl %>" placeholder="/my-paper.pdf" />
+      </label>
+      <label class="field">
+        <span>Series (optional)</span>
+        <input name="series" value="<%= post.series %>" placeholder="Kubernetes from scratch" />
+      </label>
+      <label class="field">
+        <span>Part # in series</span>
+        <input name="part" type="number" min="1" value="<%= post.part || '' %>" placeholder="1" />
+      </label>
+      <label class="field">
+        <span>Interactive scripts (comma separated)</span>
+        <input name="scripts" value="<%= post.scripts.join(', ') %>" placeholder="/blog-assets/my-post/demo.js" />
+      </label>
+      <label class="field checkbox">
+        <input name="draft" type="checkbox" <%= post.draft ? 'checked' : '' %> />
+        <span>Draft (hidden from the site)</span>
+      </label>
+    </div>
+
+    <div class="editor-toolbar" role="toolbar" aria-label="Formatting">
+      <button type="button" data-md="bold" title="Bold (Ctrl+B)"><b>B</b></button>
+      <button type="button" data-md="italic" title="Italic (Ctrl+I)"><i>I</i></button>
+      <button type="button" data-md="h2">H2</button>
+      <button type="button" data-md="h3">H3</button>
+      <button type="button" data-md="link" title="Link (Ctrl+K)">Link</button>
+      <button type="button" data-md="code">`code`</button>
+      <button type="button" data-md="codeblock">```block```</button>
+      <button type="button" data-md="quote">&gt; Quote</button>
+      <button type="button" data-md="list">• List</button>
+      <button type="button" data-md="terminal" title="Replayable terminal session">$ terminal</button>
+      <button type="button" id="imageBtn">🖼 Image</button>
+      <span class="editor-hint">Paste or drop images straight into the text.</span>
+      <button type="button" id="previewToggle" class="preview-toggle">Preview</button>
+    </div>
+
+    <div class="editor-panes">
+      <textarea id="bodyInput" name="body" spellcheck="true" placeholder="Write your post in Markdown..."><%= post.body %></textarea>
+      <div class="editor-preview">
+        <div id="preview" class="prose"></div>
+      </div>
+    </div>
+
+    <input type="file" id="fileInput" accept="image/*" hidden />
+  </form>
+</main>
+
+<script src="/admin/assets/blog-editor.js" defer></script>
+<%- include('partials/footer') %>

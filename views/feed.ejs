@@ -1,0 +1,31 @@
+<%- include('partials/head', { page, site, currentPath: '/feed' }) %>
+<%- include('partials/header', { currentPath: '/feed' }) %>
+
+<main id="main" class="wrap">
+  <header class="page-head">
+    <p class="kicker">RSS</p>
+    <h1>Follow new posts.</h1>
+    <p class="lede">Paste this address into any feed reader (Feedly, Inoreader, NetNewsWire, Miniflux…) and new posts show up there automatically. No account or email needed.</p>
+  </header>
+
+  <div class="feed-box">
+    <code id="feedUrl"><%= feedUrl %></code>
+    <button type="button" class="btn btn-primary" id="copyFeed" data-url="<%= feedUrl %>">Copy</button>
+  </div>
+  <p class="muted feed-raw">Or open the <a href="/rss.xml">raw feed</a> (it's XML, meant for apps rather than people).</p>
+
+  <% if (posts.length) { %>
+    <section class="section" aria-labelledby="feed-latest">
+      <header class="section-head">
+        <h2 id="feed-latest"><span class="sec-no">§</span>Currently in the feed</h2>
+      </header>
+      <div class="tiles">
+        <% posts.forEach((post) => { %>
+          <%- include('partials/post-tile', { post }) %>
+        <% }) %>
+      </div>
+    </section>
+  <% } %>
+</main>
+
+<%- include('partials/footer') %>

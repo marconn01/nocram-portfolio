@@ -1,18 +1,72 @@
 <%- include('partials/head', { page, site, currentPath: `/blog/${post.slug}` }) %>
 <%- include('partials/header', { currentPath: '/blog' }) %>
 
-<main>
-  <article class="article-shell">
-    <p class="eyebrow">Blog</p>
-    <h1><%= post.title %></h1>
-    <p class="article-meta"><%= post.date %> • <%= post.readTime %> • <%= post.tags.join(' • ') %></p>
+<div class="read-progress" aria-hidden="true"><span id="readProgress"></span></div>
 
-    <iframe
-      class="pdf-frame"
-      src="<%= post.pdfUrl %>#toolbar=0&navpanes=0&scrollbar=1&view=FitH"
-      title="<%= post.title %>"
-    ></iframe>
-  </article>
+<main id="main" class="wrap">
+  <div class="article-layout<%= post.toc.length > 1 ? ' has-toc' : '' %>">
+    <article class="article">
+      <header class="article-head">
+        <p class="crumbs"><a href="/blog">writing</a> / <%= post.slug %></p>
+        <h1><%= post.title %></h1>
+        <p class="article-meta">
+          <time datetime="<%= post.date %>"><%= post.date %></time>
+          <span><%= post.readTime %></span>
+          <% post.tags.forEach((tag) => { %><a href="/blog?q=<%= encodeURIComponent(tag.toLowerCase()) %>">#<%= tag.toLowerCase() %></a><% }) %>
+        </p>
+      </header>
+
+      <% if (series && series.posts.length > 1) { %>
+        <nav class="series-box" aria-label="Series: <%= series.name %>">
+          <p class="kicker">Series · part <%= series.posts.findIndex((p) => p.slug === post.slug) + 1 %> of <%= series.posts.length %></p>
+          <p class="series-name"><%= series.name %></p>
+          <ol>
+            <% series.posts.forEach((p) => { %>
+              <li class="<%= p.slug === post.slug ? 'is-current' : '' %>">
+                <% if (p.slug === post.slug) { %><span><%= p.title %></span><% } else { %><a href="/blog/<%= p.slug %>"><%= p.title %></a><% } %>
+              </li>
+            <% }) %>
+          </ol>
+        </nav>
+      <% } %>
+
+      <% if (post.pdfUrl) { %>
+        <iframe class="pdf-frame" src="<%= post.pdfUrl %>#toolbar=0&navpanes=0&scrollbar=1&view=FitH" title="<%= post.title %>"></iframe>
+        <p class="muted"><a href="<%= post.pdfUrl %>" target="_blank" rel="noopener">Open the PDF in a new tab ↗</a></p>
+      <% } else { %>
+        <% if (post.cover) { %>
+          <img class="article-cover" src="<%= post.cover %>" alt="" />
+        <% } %>
+        <div class="prose" id="articleBody"><%- post.html %></div>
+      <% } %>
+
+      <footer class="article-foot">
+        <nav class="post-nav" aria-label="More posts">
+          <% if (older) { %>
+            <a href="/blog/<%= older.slug %>" class="post-nav-link"><span class="kicker">← older</span><%= older.title %></a>
+          <% } else { %><span></span><% } %>
+          <% if (newer) { %>
+            <a href="/blog/<%= newer.slug %>" class="post-nav-link is-next"><span class="kicker">newer →</span><%= newer.title %></a>
+          <% } %>
+        </nav>
+      </footer>
+    </article>
+
+    <% if (post.toc.length > 1) { %>
+      <aside class="toc" aria-label="On this page">
+        <p class="kicker">On this page</p>
+        <ol>
+          <% post.toc.forEach((item) => { %>
+            <li class="toc-<%= item.depth %>"><a href="#<%= item.id %>"><%= item.text %></a></li>
+          <% }) %>
+        </ol>
+      </aside>
+    <% } %>
+  </div>
 </main>
 
+<script src="/widgets.js" defer></script>
+<% post.scripts.forEach((src) => { %>
+  <script src="<%= src %>" defer></script>
+<% }) %>
 <%- include('partials/footer') %>

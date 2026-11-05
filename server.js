@@ -4,22 +4,43 @@ const express = require("express");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const path = require("path");
+const { execSync } = require("child_process");
 
 const basicAuth = require("./src/middleware/basicAuth");
 const { validateContactForm } = require("./src/validation/contactValidation");
 const { getProjects, saveContactMessage } = require("./src/db");
-const { getAllPosts, getPostBySlug } = require("./src/data/blogs");
+const { getAllPosts, getPostBySlug, getSeries, getNeighbours } = require("./src/data/blogs");
+const blogAdmin = require("./src/admin/blogAdmin");
+const resume = require("./src/data/resume");
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
-const siteUrl = process.env.SITE_URL || `http://localhost:${PORT}`;
+// Used for canonical links, the sitemap, and RSS. The Cloudflare build doesn't set
+// SITE_URL, so default to the real domain rather than localhost.
+const siteUrl = (process.env.SITE_URL || "https://navinnepal.com.np").replace(/\/$/, "");
+
+// Shown in the footer status line. Cloudflare's builder exposes the commit SHA as an env var.
+function readBuildSha() {
+  const fromEnv = process.env.WORKERS_CI_COMMIT_SHA || process.env.CF_PAGES_COMMIT_SHA || "";
+  if (fromEnv) return fromEnv.slice(0, 7);
+  try {
+    return execSync("git rev-parse --short HEAD", { stdio: ["ignore", "pipe", "ignore"] }).toString().trim();
+  } catch (error) {
+    return "dev";
+  }
+}
+
+const build = {
+  sha: readBuildSha(),
+  date: new Date().toISOString().slice(0, 10)
+};
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 app.use(helmet());
 app.use(morgan(":method :url :status :response-time ms"));
-app.use(express.json());
+app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -29,6 +50,8 @@ app.use((req, res, next) => {
     description: "DevOps and backend portfolio focused on AWS, Kubernetes, CI/CD, and scalable backend systems.",
     url: siteUrl
   };
+  res.locals.build = build;
+  res.locals.currentUrl = req.path;
   next();
 });
 
@@ -42,7 +65,7 @@ app.get("/", async (req, res, next) => {
         description: "Portfolio website of Navin Nepal with DevOps, backend engineering, and cloud-native projects."
       },
       featured,
-      latestPosts: getAllPosts().slice(0, 3),
+      latestPosts: getAllPosts().slice(0, 4),
       now: new Date().getFullYear()
     });
   } catch (error) {
@@ -67,18 +90,28 @@ app.get("/projects", async (req, res, next) => {
   }
 });
 
-app.get("/resume", async (req, res, next) => {
-  return res.redirect("/Navin_Nepal_Resume.pdf");
+app.get("/cv", (req, res) => {
+  return res.render("cv", {
+    page: {
+      title: "CV",
+      description: "CV of Navin Nepal: DevOps and backend engineer. Experience, projects, skills, and education."
+    },
+    resume
+  });
 });
+
+app.get("/resume", (req, res) => res.redirect(301, "/cv"));
 
 app.get("/blog", (req, res) => {
   const posts = getAllPosts();
   return res.render("blog", {
     page: {
-      title: "Blog",
+      title: "Writing",
       description: "Articles on DevOps, SRE, cloud engineering, and backend development."
     },
-    posts
+    posts,
+    series: getSeries(),
+    tags: [...new Set(posts.flatMap((post) => post.tags))].sort((a, b) => a.localeCompare(b))
   });
 });
 
@@ -98,7 +131,9 @@ app.get("/blog/:slug", (req, res) => {
       title: post.title,
       description: post.excerpt
     },
-    post
+    post,
+    series: post.series ? getSeries().find((group) => group.name === post.series) : null,
+    ...getNeighbours(post.slug)
   });
 });
 
@@ -159,15 +194,65 @@ app.get("/admin", basicAuth, async (req, res, next) => {
         title: "Admin",
         description: "Protected route demonstrating simple auth middleware."
       },
-      projectCount: projects.length
+      projectCount: projects.length,
+      postCount: getAllPosts({ includeDrafts: true }).length
     });
   } catch (error) {
     return next(error);
   }
 });
 
+// The blog manager writes Markdown files to disk, so it only runs locally.
+// Production is a static build, and posts go live via git push.
+if (process.env.NODE_ENV !== "production") {
+  app.use("/admin", blogAdmin);
+}
+
+app.get("/feed", (req, res) => {
+  return res.render("feed", {
+    page: {
+      title: "Subscribe",
+      description: "Follow new posts by Navin Nepal with any RSS reader."
+    },
+    feedUrl: `${siteUrl}/rss.xml`,
+    posts: getAllPosts().slice(0, 5)
+  });
+});
+
+app.get("/rss.xml", (req, res) => {
+  const escapeXml = (value) =>
+    String(value).replace(/[<>&'"]/g, (char) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '"': "&quot;" })[char]);
+
+  const items = getAllPosts()
+    .slice(0, 30)
+    .map(
+      (post) => `<item>
+  <title>${escapeXml(post.title)}</title>
+  <link>${siteUrl}/blog/${post.slug}</link>
+  <guid>${siteUrl}/blog/${post.slug}</guid>
+  <pubDate>${new Date(post.date).toUTCString()}</pubDate>
+  <description>${escapeXml(post.excerpt)}</description>
+</item>`
+    )
+    .join("\n");
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Navin Nepal: Writing</title>
+  <link>${siteUrl}/blog</link>
+  <description>Notes on DevOps, SRE, cloud, and backend engineering.</description>
+  <language>en</language>
+  <atom:link href="${siteUrl}/rss.xml" rel="self" type="application/rss+xml" />
+${items}
+</channel>
+</rss>`;
+
+  res.header("Content-Type", "application/rss+xml; charset=utf-8").send(xml);
+});
+
 app.get("/sitemap.xml", async (req, res) => {
-  const routes = ["/", "/projects", "/blog", "/contact", "/resume"];
+  const routes = ["/", "/projects", "/blog", "/cv", "/contact", "/feed"];
   const postRoutes = getAllPosts().map((post) => `/blog/${post.slug}`);
   const urls = routes
     .concat(postRoutes)
@@ -196,5 +281,9 @@ app.use((err, req, res, next) => {
     error: "Something went wrong on the server."
   });
 });
+
+if (require.main === module) {
+  app.listen(PORT, () => console.log(`Portfolio running at http://localhost:${PORT}`));
+}
 
 module.exports = app;

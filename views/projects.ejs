@@ -1,16 +1,16 @@
 <%- include('partials/head', { page, site, currentPath: '/projects' }) %>
 <%- include('partials/header', { currentPath: '/projects' }) %>
 
-<main>
-  <section class="page-head">
-    <p class="eyebrow">Project Gallery</p>
-    <h1>Projects and Publications</h1>
-  </section>
+<main id="main" class="wrap">
+  <header class="page-head">
+    <p class="kicker">Projects</p>
+    <h1>Projects &amp; publications</h1>
+    <p class="lede">Infrastructure, backend, and research work. Filter by area below.</p>
+  </header>
 
-  <section class="publication-card" aria-label="Publications and research">
-    <p class="eyebrow">Publications and Research</p>
+  <section class="callout" aria-label="Publication">
+    <p class="kicker">Publication · arXiv:2508.16024</p>
     <h2>Wavelet-Driven Neural Super-Resolution for Real-Time Rendering</h2>
-    <p>arXiv:2508.16024</p>
     <ul>
       <li>Researched and implemented a wavelet-based neural super-resolution method for rendered frame quality enhancement.</li>
       <li>Developed a Fourier-Mapped INR module for high-frequency detail reconstruction in real-time rendering.</li>
@@ -20,24 +20,24 @@
     </ul>
   </section>
 
-  <section class="cards projects-grid" aria-label="Project list">
-    <% if (!projects.length) { %>
-      <article class="card empty">
-        <h2>No projects found</h2>
-        <p>Try another filter value.</p>
-      </article>
-    <% } %>
+  <% const types = [...new Set(projects.map((project) => project.type))]; %>
+  <div class="filter-bar" role="group" aria-label="Filter projects">
+    <button type="button" class="chip is-active" data-filter="">all <span><%= projects.length %></span></button>
+    <% types.forEach((type) => { %>
+      <button type="button" class="chip" data-filter="<%= type %>"><%= type.toLowerCase() %></button>
+    <% }) %>
+  </div>
 
+  <section class="project-list" id="projectList" aria-label="Project list">
+    <% if (!projects.length) { %>
+      <p class="muted">No projects found.</p>
+    <% } %>
     <% projects.forEach((project) => { %>
-      <article class="card">
-        <p class="chip"><%= project.type %> / <%= project.year %></p>
+      <article class="project-row" data-type="<%= project.type %>">
+        <p class="project-meta"><%= project.year %> · <%= project.type %></p>
         <h2><%= project.title %></h2>
         <p><%= project.summary %></p>
-        <ul>
-          <% project.stack.forEach((tech) => { %>
-            <li><%= tech %></li>
-          <% }) %>
-        </ul>
+        <p class="stack"><% project.stack.forEach((tech) => { %><span><%= tech %></span><% }) %></p>
       </article>
     <% }) %>
   </section>

@@ -1,23 +1,22 @@
-<%- include('partials/head', { page, site, currentPath: '/admin' }) %>
+<%- include('partials/head', { page: { ...page, noindex: true }, site, currentPath: '/admin' }) %>
 <%- include('partials/header', { currentPath: '/admin' }) %>
 
-<main>
-  <section class="page-head">
-    <p class="eyebrow">Protected</p>
+<main id="main" class="wrap">
+  <header class="page-head">
+    <p class="kicker">Protected</p>
     <h1>Admin dashboard</h1>
-    <p>This route is guarded by basic authentication middleware.</p>
-  </section>
+    <p class="lede">This route is guarded by basic authentication middleware.</p>
+  </header>
 
-  <section class="stats">
-    <article>
-      <h2><%= projectCount %></h2>
-      <p>Total projects in source</p>
-    </article>
-    <article>
-      <h2>ON</h2>
-      <p>Authentication middleware status</p>
-    </article>
-  </section>
+  <dl class="stat-grid">
+    <div><dt>projects</dt><dd><%= projectCount %></dd></div>
+    <div><dt>blog posts (incl. drafts)</dt><dd><%= postCount %></dd></div>
+    <div><dt>auth middleware</dt><dd>on</dd></div>
+  </dl>
+
+  <div class="actions">
+    <a class="btn btn-primary" href="/admin/blog">Open blog manager</a>
+  </div>
 </main>
 
 <%- include('partials/footer') %>

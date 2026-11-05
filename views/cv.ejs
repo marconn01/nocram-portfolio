@@ -1,0 +1,97 @@
+<%- include('partials/head', { page, site, currentPath: '/cv' }) %>
+<%- include('partials/header', { currentPath: '/cv' }) %>
+
+<main id="main" class="wrap cv">
+  <header class="page-head cv-head">
+    <div>
+      <p class="kicker">Curriculum vitae · updated <%= resume.updated %></p>
+      <h1><%= resume.name %></h1>
+      <p class="lede"><%= resume.headline %> · <%= resume.location %></p>
+    </div>
+    <div class="actions cv-actions">
+      <a class="btn btn-primary" href="<%= resume.pdf %>" download>Download PDF ↓</a>
+      <button type="button" class="btn" id="printCv">Print</button>
+    </div>
+  </header>
+
+  <div class="cv-layout">
+    <aside class="cv-side">
+      <section>
+        <h2 class="cv-label">contact</h2>
+        <dl class="spec">
+          <% resume.contact.forEach((item) => { %>
+            <div><dt><%= item.label %></dt><dd><a href="<%= item.href %>"<%= item.href.startsWith('http') ? ' target="_blank" rel="noopener"' : '' %>><%= item.text %></a></dd></div>
+          <% }) %>
+        </dl>
+      </section>
+
+      <section>
+        <h2 class="cv-label">skills</h2>
+        <% resume.skills.forEach((skill) => { %>
+          <p class="cv-skill-group"><%= skill.group %></p>
+          <p class="stack"><% skill.items.forEach((item) => { %><span><%= item %></span><% }) %></p>
+        <% }) %>
+      </section>
+
+      <section>
+        <h2 class="cv-label">education</h2>
+        <% resume.education.forEach((edu) => { %>
+          <p class="cv-edu"><strong><%= edu.school %></strong><br /><%= edu.degree %><br /><span class="muted"><%= edu.period %> · <%= edu.place %></span></p>
+        <% }) %>
+      </section>
+
+      <section>
+        <h2 class="cv-label">certifications</h2>
+        <ul class="cv-list">
+          <% resume.certifications.forEach((cert) => { %><li><%= cert %></li><% }) %>
+        </ul>
+      </section>
+    </aside>
+
+    <div class="cv-main">
+      <section class="cv-section">
+        <h2 class="cv-label"><span class="sec-no">01</span> experience</h2>
+        <% resume.experience.forEach((job) => { %>
+          <article class="cv-entry">
+            <p class="cv-period"><%= job.period %></p>
+            <div>
+              <h3><%= job.role %> <span class="muted">at</span> <%= job.org %></h3>
+              <p class="project-meta"><%= job.tags %></p>
+              <ul class="cv-list"><% job.points.forEach((point) => { %><li><%= point %></li><% }) %></ul>
+              <p class="stack"><% job.stack.forEach((item) => { %><span><%= item %></span><% }) %></p>
+            </div>
+          </article>
+        <% }) %>
+      </section>
+
+      <section class="cv-section">
+        <h2 class="cv-label"><span class="sec-no">02</span> projects</h2>
+        <% resume.projects.forEach((project) => { %>
+          <article class="cv-entry cv-entry-flat">
+            <div>
+              <h3><%= project.name %></h3>
+              <p class="project-meta"><%= project.subtitle %><% if (project.link) { %> · <a href="<%= project.link.href %>" target="_blank" rel="noopener"><%= project.link.text %> ↗</a><% } %></p>
+              <ul class="cv-list"><% project.points.forEach((point) => { %><li><%= point %></li><% }) %></ul>
+              <p class="stack"><% project.stack.forEach((item) => { %><span><%= item %></span><% }) %></p>
+            </div>
+          </article>
+        <% }) %>
+      </section>
+
+      <section class="cv-section">
+        <h2 class="cv-label"><span class="sec-no">03</span> leadership &amp; community</h2>
+        <% resume.activities.forEach((item) => { %>
+          <article class="cv-entry">
+            <p class="cv-period"><%= item.period %></p>
+            <div>
+              <h3><%= item.role %> <span class="muted">·</span> <%= item.org %></h3>
+              <ul class="cv-list"><% item.points.forEach((point) => { %><li><%= point %></li><% }) %></ul>
+            </div>
+          </article>
+        <% }) %>
+      </section>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

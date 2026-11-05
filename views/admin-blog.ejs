@@ -1,0 +1,42 @@
+<%- include('partials/head', { page: { ...page, noindex: true }, site, currentPath: '/admin/blog' }) %>
+<%- include('partials/header', { currentPath: '/admin' }) %>
+
+<main id="main" class="wrap">
+  <header class="page-head admin-head">
+    <div>
+      <p class="kicker">Local only</p>
+      <h1>Blog manager</h1>
+      <p class="lede">Posts live in <code>content/blog/*.md</code>. Save here, then commit &amp; push to publish.</p>
+    </div>
+    <a class="btn btn-primary" href="/admin/blog/new">+ New post</a>
+  </header>
+
+  <% if (!posts.length) { %>
+    <p class="empty-state">No posts yet. Write your first one.</p>
+  <% } %>
+  <ol class="post-list admin-list">
+    <% posts.forEach((post) => { %>
+      <li class="post-row admin-row">
+        <span class="badge <%= post.draft ? 'is-draft' : 'is-live' %>"><%= post.draft ? 'draft' : 'live' %></span>
+        <div>
+          <a href="/admin/blog/edit/<%= post.slug %>" class="post-title"><%= post.title %></a>
+          <p class="post-tags">
+            <span><%= post.date %></span>
+            <span>content/blog/<%= post.slug %>.md</span>
+            <% if (post.series) { %><span>series: <%= post.series %></span><% } %>
+            <% post.tags.forEach((tag) => { %><span>#<%= tag.toLowerCase() %></span><% }) %>
+          </p>
+        </div>
+        <div class="row-actions">
+          <a class="btn btn-small" href="/admin/blog/edit/<%= post.slug %>">edit</a>
+          <a class="btn btn-small" href="/admin/blog/preview/<%= post.slug %>" target="_blank" rel="noopener">preview ↗</a>
+          <% if (!post.draft) { %>
+            <a class="btn btn-small" href="/blog/<%= post.slug %>" target="_blank" rel="noopener">view ↗</a>
+          <% } %>
+        </div>
+      </li>
+    <% }) %>
+  </ol>
+</main>
+
+<%- include('partials/footer') %>

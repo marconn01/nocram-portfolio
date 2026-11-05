@@ -1,25 +1,57 @@
 <%- include('partials/head', { page, site, currentPath: '/blog' }) %>
 <%- include('partials/header', { currentPath: '/blog' }) %>
 
-<main>
-  <section class="page-head split">
-    <div>
-      <p class="eyebrow">Blog</p>
-      <h1>My Blogs</h1>
-      <p>Some of the Things I have Written while learning it.</p>
-    </div>
+<main id="main" class="wrap">
+  <header class="page-head page-head-compact">
+    <h1>Writing</h1>
+    <p class="kicker"><%= posts.length %> post<%= posts.length === 1 ? '' : 's' %> · notes from building and running systems · <a href="/feed">rss</a></p>
+  </header>
+
+  <section class="search" role="search">
+    <label for="blogSearch" class="visually-hidden">Search posts</label>
+    <span class="search-icon" aria-hidden="true">/</span>
+    <input id="blogSearch" type="search" placeholder="Search posts: kubernetes, terraform, nepal…" autocomplete="off" aria-controls="blogList" />
+    <span id="blogSearchStatus" class="search-status" aria-live="polite"></span>
   </section>
 
-  <section class="cards blog-grid" aria-label="Blog posts">
+  <% if (tags.length) { %>
+    <div class="filter-bar" role="group" aria-label="Filter by tag">
+      <% tags.forEach((tag) => { %>
+        <button type="button" class="chip" data-tag="<%= tag.toLowerCase() %>">#<%= tag.toLowerCase() %></button>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <% if (series.length) { %>
+    <section class="section series-index" aria-labelledby="series-heading">
+      <header class="section-head">
+        <h2 id="series-heading"><span class="sec-no">§</span>Series</h2>
+      </header>
+      <div class="series-grid">
+        <% series.forEach((group) => { %>
+          <article class="series-card">
+            <p class="project-meta"><%= group.posts.length %> part<%= group.posts.length === 1 ? '' : 's' %></p>
+            <h3><a href="/blog/<%= group.posts[0].slug %>"><%= group.name %></a></h3>
+            <ol>
+              <% group.posts.forEach((post) => { %>
+                <li><a href="/blog/<%= post.slug %>"><%= post.title %></a></li>
+              <% }) %>
+            </ol>
+          </article>
+        <% }) %>
+      </div>
+    </section>
+  <% } %>
+
+  <section id="blogList" class="tiles tiles-large" aria-label="All posts">
     <% posts.forEach((post) => { %>
-      <article class="card blog-card">
-        <p class="chip"><%= post.readTime %> / <%= post.date %></p>
-        <h2><a href="/blog/<%= post.slug %>"><%= post.title %></a></h2>
-        <p><%= post.excerpt %></p>
-        <a class="btn ghost" href="/blog/<%= post.slug %>">Open</a>
-      </article>
+      <%- include('partials/post-tile', { post }) %>
     <% }) %>
   </section>
+
+  <p id="blogEmpty" class="empty-state" <%= posts.length ? 'hidden' : '' %>>
+    <%= posts.length ? 'No posts match that search.' : 'Nothing published yet. First post coming soon.' %>
+  </p>
 </main>
 
 <%- include('partials/footer') %>

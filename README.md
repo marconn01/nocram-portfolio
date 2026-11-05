@@ -56,7 +56,9 @@ Personal portfolio web app built with Express + EJS, styled with a retro game-in
 - `server.js`: Express app bootstrap, middleware, and all routes
 - `src/db.js`: Local project retrieval and in-memory contact message storage
 - `src/data/projects.js`: Portfolio projects/publications source data
-- `src/data/blogs.js`: Blog metadata and PDF links
+- `content/blog/`: Blog posts as Markdown files
+- `src/data/blogs.js`: Reads, renders, and saves Markdown blog posts
+- `src/admin/`: Local blog manager routes and editor script
 - `src/middleware/basicAuth.js`: Basic authentication middleware for `/admin`
 - `src/validation/contactValidation.js`: Contact form validation logic
 - `views/`: EJS templates (`index`, `projects`, `blog`, `blog-post`, `contact`, `admin`, `not-found`)
@@ -83,10 +85,48 @@ npm start
 
 Open the app at `http://localhost:3000`.
 
+## Writing Blog Posts
+
+Posts are Markdown files in `content/blog/<slug>.md`. The file name is the URL: `content/blog/my-post.md` becomes `/blog/my-post`.
+
+```md
+---
+title: "Setting up ArgoCD on EKS"
+date: 2026-11-05
+excerpt: "Short summary shown on cards and in search."
+tags: ["Kubernetes", "GitOps"]
+cover: "/blog-images/argocd-cover.png"   # optional
+pdf: "/some-paper.pdf"                   # optional: show a PDF instead of text
+series: "Kubernetes from scratch"        # optional: groups posts into a series
+part: 1                                  # optional: order inside the series
+scripts: ["/blog-assets/my-post/demo.js"] # optional: custom interactive widgets
+draft: false                             # true = hidden from the site
+---
+
+Your post in Markdown...
+```
+
+### Blog manager (local only)
+
+1. `npm run dev`
+2. Open `http://localhost:3000/admin/blog` and log in with `ADMIN_USER` / `ADMIN_PASS`
+3. Write with live preview. Paste, drop, or upload images (saved to `public/blog-images/`)
+4. Save, then `git add . && git commit && git push`. Cloudflare rebuilds and the post goes live.
+
+The manager writes files to disk, so it is disabled when `NODE_ENV=production` and never included in the static build.
+See the draft `content/blog/markdown-cheatsheet.md` for formatting examples.
+
+### Interactive posts
+
+- Code blocks get a copy button automatically.
+- A ` ```terminal title ` block renders a terminal that replays itself (`$ ` lines are commands).
+- For custom widgets, put a script in `public/blog-assets/<slug>/`, list it under `scripts:`, and add a placeholder element (e.g. `<div class="widget" data-backoff></div>`) to the Markdown. See `public/blog-assets/demos/backoff.js`.
+- Use the editor's **full preview** button to try widgets on drafts before publishing.
+
 ## Environment Variables
 
 - `PORT`: Server port (default `3000`)
-- `SITE_URL`: Canonical base URL used for SEO sitemap generation
+- `SITE_URL`: Canonical base URL for canonical links, sitemap, and RSS (default `https://navinnepal.com.np`)
 - `ADMIN_USER`: Basic auth username for `/admin` (default `admin`)
 - `ADMIN_PASS`: Basic auth password for `/admin` (default `changeme`)
 
@@ -101,14 +141,18 @@ Open the app at `http://localhost:3000`.
 - `GET /projects`: Projects page
 - `GET /projects?type=Cloud`: Filter projects by type
 - `GET /blog`: Blog index page
-- `GET /blog/:slug`: Blog detail page (PDF embed)
-- `GET /resume`: Redirects to resume PDF
+- `GET /blog/:slug`: Blog detail page (Markdown or PDF embed)
+- `GET /cv`: CV page (content in `src/data/resume.js`, PDF download)
+- `GET /resume`: Redirects to `/cv`
+- `GET /feed`: Human-friendly RSS subscribe page
 - `GET /contact`: Contact page
 - `POST /api/contact`: Validated AJAX contact endpoint
 - `GET /api/projects`: Projects JSON endpoint
 - `GET /hello?name=YourName`: Dynamic greeting endpoint
 - `GET /admin`: Protected admin page (Basic Auth)
+- `GET /admin/blog`: Blog manager (local only, Basic Auth)
 - `GET /sitemap.xml`: SEO sitemap
+- `GET /rss.xml`: RSS feed of published posts
 - `GET /robots.txt`: Robots directives
 
 ## Notes

@@ -1,40 +1,41 @@
 <%- include('partials/head', { page, site, currentPath: '/contact' }) %>
 <%- include('partials/header', { currentPath: '/contact' }) %>
 
-<main>
-  <section class="page-head">
-    <p class="eyebrow">Contact</p>
-    <h1>Send a message</h1>
-    <p>Reach out for backend engineering, DevOps automation, or cloud deployment collaborations.</p>
-  </section>
+<main id="main" class="wrap">
+  <header class="page-head">
+    <p class="kicker">Contact</p>
+    <h1>Send a message.</h1>
+    <p class="lede">Reach out for backend engineering, DevOps automation, or cloud deployment collaborations.</p>
+  </header>
 
-  <section class="contact-shell">
-    <form id="contactForm" class="contact-form" novalidate>
+  <section class="contact-layout">
+    <form id="contactForm" class="form" novalidate>
       <label for="name">Name</label>
-      <input id="name" name="name" type="text" required minlength="2" />
+      <input id="name" name="name" type="text" required minlength="2" autocomplete="name" />
 
       <label for="email">Email</label>
-      <input id="email" name="email" type="email" required />
+      <input id="email" name="email" type="email" required autocomplete="email" />
 
       <label for="subject">Subject</label>
       <input id="subject" name="subject" type="text" required minlength="4" />
 
       <label for="message">Message</label>
-      <textarea id="message" name="message" rows="6" required minlength="12"></textarea>
+      <textarea id="message" name="message" rows="7" required minlength="12"></textarea>
 
-      <button type="submit" class="btn primary">Submit</button>
-      <p id="formStatus" class="form-status" aria-live="polite"></p>
+      <div class="form-foot">
+        <button type="submit" class="btn btn-primary">Send message</button>
+        <p id="formStatus" class="form-status" aria-live="polite"></p>
+      </div>
     </form>
 
-    <aside class="contact-card">
-      <h2>Prefer direct channel?</h2>
-      <p>Email: navinkhanal3@gmail.com</p>
-      <p>Phone: +977 9868265503</p>
-      <p>Location: Kathmandu, Nepal</p>
-      <p>GitHub: <a href="https://github.com/marconn01" target="_blank" rel="noopener">github.com/marconn01</a></p>
-      <p>LinkedIn: <a href="https://www.linkedin.com/in/navin-nepal/" target="_blank" rel="noopener">linkedin.com/in/navin-nepal</a></p>
-      <p>Response time: usually within 24 hours</p>
-    </aside>
+    <dl class="spec" aria-label="Direct contact">
+      <div><dt>email</dt><dd><a href="mailto:navinkhanal3@gmail.com">navinkhanal3@gmail.com</a></dd></div>
+      <div><dt>phone</dt><dd><a href="tel:+9779868265503">+977 9868265503</a></dd></div>
+      <div><dt>location</dt><dd>Kathmandu, Nepal</dd></div>
+      <div><dt>github</dt><dd><a href="https://github.com/marconn01" target="_blank" rel="noopener">marconn01</a></dd></div>
+      <div><dt>linkedin</dt><dd><a href="https://www.linkedin.com/in/navin-nepal/" target="_blank" rel="noopener">navin-nepal</a></dd></div>
+      <div><dt>reply</dt><dd>usually within 24 hours</dd></div>
+    </dl>
   </section>
 </main>
 

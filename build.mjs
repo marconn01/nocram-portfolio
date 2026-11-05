@@ -68,6 +68,14 @@ try {
     }
   }
 
+  // Feeds are not linked as pages, so fetch them explicitly
+  for (const route of ["/sitemap.xml", "/rss.xml"]) {
+    const res = await fetch(base + route);
+    if (!res.ok) throw new Error(`${route} returned ${res.status}`);
+    await writeFile(path.join(OUT, route.slice(1)), await res.text());
+    console.log("Rendered", route);
+  }
+
   console.log(`Done: ${seen.size} page(s) checked`);
   process.exit(0);
 } catch (err) {

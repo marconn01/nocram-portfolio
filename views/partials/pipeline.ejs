@@ -1,0 +1,35 @@
+<%
+  const nodes = [
+    { label: 'git push', sub: 'github' },
+    { label: 'ci', sub: 'actions · tests' },
+    { label: 'image', sub: 'ecr' },
+    { label: 'deploy', sub: 'eks · terraform' },
+    { label: 'users', sub: 'alb · cdn' }
+  ];
+  const w = 140, gap = 65, y = 46, h = 64;
+%>
+<figure class="pipeline">
+  <div class="pipeline-scroll">
+    <svg viewBox="0 0 960 118" role="img" aria-labelledby="pipelineTitle">
+      <title id="pipelineTitle">Delivery pipeline: git push, CI, container image, Kubernetes deploy, users</title>
+      <% nodes.forEach((node, i) => { const x = i * (w + gap); %>
+        <% if (i < nodes.length - 1) { %>
+          <line class="pl-edge" x1="<%= x + w %>" y1="<%= y + h / 2 %>" x2="<%= x + w + gap %>" y2="<%= y + h / 2 %>" />
+          <circle class="pl-packet" style="--x0: <%= x + w %>px; --x1: <%= x + w + gap %>px; animation-delay: <%= i * 0.45 %>s" cx="0" cy="<%= y + h / 2 %>" r="3" />
+        <% } %>
+        <g class="pl-node<%= i === 3 ? ' is-accent' : '' %>">
+          <text class="pl-index" x="<%= x %>" y="<%= y - 12 %>">0<%= i + 1 %></text>
+          <rect x="<%= x + 0.5 %>" y="<%= y + 0.5 %>" width="<%= w - 1 %>" height="<%= h - 1 %>" rx="3" />
+          <text class="pl-label" x="<%= x + 14 %>" y="<%= y + 27 %>"><%= node.label %></text>
+          <text class="pl-sub" x="<%= x + 14 %>" y="<%= y + 46 %>"><%= node.sub %></text>
+        </g>
+      <% }) %>
+    </svg>
+  </div>
+  <ol class="pipeline-steps" aria-hidden="true">
+    <% nodes.forEach((node, i) => { %>
+      <li class="<%= i === 3 ? 'is-accent' : '' %>"><span>0<%= i + 1 %></span><div><%= node.label %><small><%= node.sub %></small></div></li>
+    <% }) %>
+  </ol>
+  <figcaption><span class="fig-no">fig. 1</span> How most of my work ships: every commit is tested, packaged, and rolled out by the pipeline.</figcaption>
+</figure>

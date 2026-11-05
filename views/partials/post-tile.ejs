@@ -1,0 +1,19 @@
+<article class="tile<%= post.cover ? ' has-cover' : '' %>" data-search="<%= post.searchText %>" data-tags="<%= post.tags.map((tag) => tag.toLowerCase()).join(' ') %>">
+  <a href="/blog/<%= post.slug %>" class="tile-link">
+    <% if (post.cover) { %>
+      <img class="tile-cover" src="<%= post.cover %>" alt="" loading="lazy" />
+    <% } %>
+    <p class="tile-top">
+      <time datetime="<%= post.date %>"><%= post.date %></time>
+      <span><%= post.pdfUrl ? 'pdf' : post.readTime %></span>
+    </p>
+    <h3 class="tile-title"><%= post.title %></h3>
+    <% if (!post.cover) { %>
+      <p class="tile-excerpt"><%= post.excerpt %></p>
+    <% } %>
+    <p class="tile-tags">
+      <% if (post.series) { %><span class="tile-series"><%= post.series %><%= post.part ? ` · ${post.part}` : '' %></span><% } %>
+      <% post.tags.slice(0, 3).forEach((tag) => { %><span>#<%= tag.toLowerCase() %></span><% }) %>
+    </p>
+  </a>
+</article>
